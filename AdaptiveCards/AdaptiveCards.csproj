@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4403B678-B89F-4927-9D1E-82BB80A5549E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>ClassLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>AdaptiveCards</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActionBase.cs" />
+    <Compile Include="ActionSet.cs" />
+    <Compile Include="AdaptiveCard.cs" />
+    <Compile Include="CardElement.cs" />
+    <Compile Include="ChoiceSet.cs" />
+    <Compile Include="Column.cs" />
+    <Compile Include="Container.cs" />
+    <Compile Include="ContainerSet.cs" />
+    <Compile Include="DateInput.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="FactSet.cs" />
+    <Compile Include="HttpAction.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="ImageSet.cs" />
+    <Compile Include="Input.cs" />
+    <Compile Include="Interfaces.cs" />
+    <Compile Include="NumberInput.cs" />
+    <Compile Include="OpenUrlAction.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\AdaptiveRenderer.cs" />
+    <Compile Include="Rendering\AdaptiveVisitor.cs" />
+    <Compile Include="Rendering\Config\ActionConfig.cs" />
+    <Compile Include="Rendering\Config\AdaptiveCardConfig.cs" />
+    <Compile Include="Rendering\Config\CardElementConfig.cs" />
+    <Compile Include="Rendering\Config\ColorConfig.cs" />
+    <Compile Include="Rendering\Config\ColumnConfig.cs" />
+    <Compile Include="Rendering\Config\ColumnSetConfig.cs" />
+    <Compile Include="Rendering\Config\ContainerConfig.cs" />
+    <Compile Include="Rendering\Config\ContainerStyleConfig.cs" />
+    <Compile Include="Rendering\Config\FactSetConfig.cs" />
+    <Compile Include="Rendering\Config\FontSizesConfig.cs" />
+    <Compile Include="Rendering\Config\HostConfig.cs" />
+    <Compile Include="Rendering\Config\ImageConfig.cs" />
+    <Compile Include="Rendering\Config\ImageSetConfig.cs" />
+    <Compile Include="Rendering\Config\ImageSizesConfig.cs" />
+    <Compile Include="Rendering\Config\InputConfig.cs" />
+    <Compile Include="Rendering\Config\SeparationConfig.cs" />
+    <Compile Include="Rendering\Config\TextBlockConfig.cs" />
+    <Compile Include="Rendering\RendererUtilities.cs" />
+    <Compile Include="ShowCardAction.cs" />
+    <Compile Include="SubmitAction.cs" />
+    <Compile Include="TextBlock.cs" />
+    <Compile Include="TextInput.cs" />
+    <Compile Include="TimeInput.cs" />
+    <Compile Include="ToggleInput.cs" />
+    <Compile Include="TypedElement.cs" />
+    <Compile Include="TypedElementConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="createpackage.cmd" />
+    <None Include="packages.config" />
+    <None Include="pushpackage.cmd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+</Project>
