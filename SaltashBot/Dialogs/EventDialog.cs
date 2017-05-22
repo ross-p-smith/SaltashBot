@@ -12,12 +12,37 @@ namespace SaltashBot.Dialogs
     [Serializable]
     public class EventDialog : IDialog<object>
     {
-        private int attempts = 3;
+        private int attempts = 0;
+        private int maxCards = 5;
+        private List<string> imageUrlsDay;
+        private Random random;
+
+        public EventDialog()
+        {
+            this.imageUrlsDay = new List<string>();
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Arial Shot of Saltash and St Budeaux.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Churchtown Farm - Saltash.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Churchtown Farm Top Field.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Churchtown View of Tamar.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Outside the Cecil pub in St Stephens.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/River Tamar From Saltash.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Saltash Waterfront Beach.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Saltash Waterfront with Union Inn.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Saltash Waterfront.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/View From Top of Saltash Town.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/View of the Tamar bridges from St Budeaux.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront Shot of Tamar Bridges.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront With Brunel and Bridge.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront With Two Bridges and Pier.jpg");
+            this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront With Two Bridges and Union Inn.jpg");
+
+            this.random = new Random();
+        }
+
 
         public async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync("Hi, I'm the Saltash event bot. Are you looking for events?");
-
+            await context.PostAsync("Hi, I'm the Saltash event bot. I understand the commands \"events\", \"about\" and \"photos\".");
             context.Wait(MessageReceivedAsync);
         }
 
@@ -28,36 +53,33 @@ namespace SaltashBot.Dialogs
             /* If the message returned is a valid name, return it to the calling dialog. */
             if ((message.Text != null) && (message.Text.Trim().Length > 0))
             {
-                var reply = context.MakeMessage();
-                /* Completes the dialog, removes it from the dialog stack, and returns the result to the parent/calling
-                    dialog. */
-                IList<Event> events = GetSaltashEvents();
-                reply.Attachments = new List<Attachment>();
-                reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
-                int counter = 1;
-
-                //context.
-                foreach (Event evt in events)
+                if (message.Text.IndexOf("event", StringComparison.InvariantCultureIgnoreCase) != -1)
                 {
-                    reply.Attachments.Add(
-                        new HeroCard
-                        {
-                            Title = evt.Title,
-                            Text = string.Format("Starts {0} and ends {1}", evt.StartDate.Value.ToString("F"), evt.EndDate.Value.ToString("F"))
-                        }
-                        .ToAttachment()
-                        );
-
-                    if(counter == 5)
-                    {
-                        break;
-                    }
-
-                    counter++;
-
+                    IMessageActivity reply = BuildEventResponse(context);
+                    await context.PostAsync("Here are the next five events taking place in Saltash");
+                    await context.PostAsync(reply);
+                    context.Done(reply);
                 }
-                await context.PostAsync(reply);
-                context.Done(reply);
+                else if (message.Text.IndexOf("about", StringComparison.InvariantCultureIgnoreCase) != -1)
+                {
+                    IMessageActivity reply = BuildWikiResponse(context, "Saltash");
+                    await context.PostAsync(reply);
+                    context.Done(reply);
+                }
+                else if (
+                            message.Text.IndexOf("photo", StringComparison.InvariantCultureIgnoreCase) != -1
+                            || message.Text.IndexOf("picture", StringComparison.InvariantCultureIgnoreCase) != -1
+                    )
+                {
+                    IMessageActivity reply = BuildPhotoResponse(context);
+                    await context.PostAsync("Here are some randomly selected photographs of Saltash");
+                    await context.PostAsync(reply);
+                    context.Done(reply);
+                }
+                else
+                {
+                    await context.PostAsync("I'm sorry, I don't understand.  I'm a bit simple!  I only understand the commands \"events\", \"about\" and \"photos\".");
+                }
             }
             /* Else, try again by re-prompting the user. */
             else
@@ -75,6 +97,114 @@ namespace SaltashBot.Dialogs
                     context.Fail(new TooManyAttemptsException("Message was not a string or was an empty string."));
                 }
             }
+        }
+
+        private IMessageActivity BuildWikiResponse(IDialogContext context, string keyword)
+        {
+            string url = string.Format("https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={0}", keyword);
+            string response = string.Empty;
+            var reply = context.MakeMessage();
+            reply.Attachments = new List<Attachment>();
+            reply.AttachmentLayout = "Single";
+
+            using (HttpClient client = new HttpClient())
+            {
+                response = client.GetStringAsync(url).Result;
+            }
+
+            response = response.Replace("\"452227\"", "Article");
+
+            var wikiResponse = JsonConvert.DeserializeObject<WikipediaObject>(response);
+
+            reply.Attachments.Add(
+                new HeroCard
+                {
+                    Title = "About Saltash",
+                    Subtitle = "Extract from Wikipedia - https://en.wikipedia.org/wiki/Saltash",
+                    Text = wikiResponse.Query.Pages.Article.Extract,
+                    Tap = new CardAction("openUrl", "Saltash Wikipedia", GetRandomImage(), "https://en.wikipedia.org/wiki/Saltash")
+                }
+                .ToAttachment());
+
+            return reply;
+        }
+
+        private IMessageActivity BuildEventResponse(IDialogContext context)
+        {
+            var reply = context.MakeMessage();
+            /* Completes the dialog, removes it from the dialog stack, and returns the result to the parent/calling
+                dialog. */
+            IList<Event> events = GetSaltashEvents();
+            reply.Attachments = new List<Attachment>();
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            int counter = 1;
+
+            //context.
+            foreach (Event evt in events)
+            {
+                reply.Attachments.Add(
+                    new HeroCard
+                    {
+                        Title = evt.Title,
+                        Subtitle = evt.Location,
+                        Text = string.Format("Starts {0}\r\nEnds {1}", evt.StartDate.Value.ToString("F"), evt.EndDate.Value.ToString("F")),
+                        Tap = new CardAction("openUrl", evt.Title, GetRandomImage(), evt.CalendarName.ToLower().Contains("facebook") ? "https://www.facebook.com/events/" + evt.Id : "http://www.saltash.website")
+                    }
+                    .ToAttachment()
+                    );
+
+                if (counter == this.maxCards)
+                {
+                    break;
+                }
+
+                counter++;
+
+            }
+
+            return reply;
+
+        }
+
+        private IMessageActivity BuildPhotoResponse(IDialogContext context)
+        {
+            int counter = 0;
+            var reply = context.MakeMessage();
+
+            /* Completes the dialog, removes it from the dialog stack, and returns the result to the parent/calling
+                dialog. */
+            reply.Attachments = new List<Attachment>();
+            reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+
+            do
+            {
+                counter++;
+                string url = GetRandomImage();
+                string imageName = url.Substring(url.LastIndexOf("/") + 1, (url.LastIndexOf(".") - url.LastIndexOf("/")) - 1);
+                HeroCard card = new HeroCard
+                {
+                    Title = imageName,
+                    Images = new List<CardImage>(),
+                    Subtitle = "Photos provided by http://www.saltash.website"
+                };
+
+                card.Images.Add(new CardImage { Url = url, Alt = imageName });
+
+
+                reply.Attachments.Add(
+                    card.ToAttachment()
+                        );
+
+            }
+            while (counter != maxCards);
+
+            return reply;
+        }
+
+
+        private string GetRandomImage()
+        {
+            return this.imageUrlsDay[random.Next(this.imageUrlsDay.Count)];
         }
 
         private IList<Event> GetSaltashEvents()
@@ -107,5 +237,6 @@ namespace SaltashBot.Dialogs
 
             return JsonConvert.DeserializeObject<IList<Event>>(calendarResponse);
         }
+
     }
 }

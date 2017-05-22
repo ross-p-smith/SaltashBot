@@ -27,8 +27,7 @@ namespace SaltashBot.Dialogs
 
         private async Task SendWelcomeMessageAsync(IDialogContext context)
         {
-//            await context.PostAsync("Hi, I'm the Saltash bot. Let's get started.");
-
+            //await context.PostAsync("Hi, I'm the Saltash bot. Let's get started.  I currently understand the commands \"Events\", \"About\" and \"Photos\"");
             context.Call(new EventDialog(), this.ResumeAfterEventDialog);
         }
 
