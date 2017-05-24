@@ -220,7 +220,7 @@ namespace SaltashBot.Dialogs
                 {
                     Title = imageName,
                     Images = new List<CardImage>(),
-                    Subtitle = "Photos provided by http://www.saltash.website"
+                    Subtitle = "Photos provided by " + (url.ToLower().Contains("churchtownfarm") ? "http://www.churchtownfarm.saltash.website" : "http://www.saltash.website")
                 };
 
                 card.Images.Add(new CardImage { Url = url, Alt = imageName });
