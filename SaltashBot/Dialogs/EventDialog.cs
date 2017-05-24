@@ -35,6 +35,31 @@ namespace SaltashBot.Dialogs
             this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront With Brunel and Bridge.jpg");
             this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront With Two Bridges and Pier.jpg");
             this.imageUrlsDay.Add("http://www.saltash.website/content/images/backgrounds/day/Waterfront With Two Bridges and Union Inn.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Anthony Passage from Chall Park field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Chall Park from Antony passage.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder Creek 1.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder Creek 2.JPG");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder Creek from Antony Passage.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder Creek from Chall Park.JPG");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder Creek from Quay park.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder Creek looking towards Viaduct.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder viaduct from Lower Southground field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Forder viaduct from Passage point.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Hay making at Blackers field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Hay making at Hitchings field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Hay making with Paul Maunder at Blackers field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Jupitor point from points field 2.JPG");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Jupitor Point from Points field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Marsh meadow park from Bramble park field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Name the Bird on a freshly ploughed Sand Acre.JPG");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Old Mill at Antony passage from Chall Park.JPG");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Plymouth from Sand Acre Bay.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Plymouth from Wearde quay.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Sandy Acre meadow.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Trematon castle from Seine House field.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/Viaduct with the 18.50 Train going over from Saltash.jpg");
+            this.imageUrlsDay.Add("http://www.churchtownfarm.saltash.website/content/images/gallery/landscape/thumbnails/View from Lower south ground field.jpg");
+
 
             this.random = new Random();
         }
@@ -56,7 +81,7 @@ namespace SaltashBot.Dialogs
                 if (message.Text.IndexOf("event", StringComparison.InvariantCultureIgnoreCase) != -1)
                 {
                     IMessageActivity reply = BuildEventResponse(context);
-                    await context.PostAsync("Here are the next five events taking place in Saltash");
+                    await context.PostAsync("Here are the next five events taking place in Saltash.  Click on each event for more information.");
                     await context.PostAsync(reply);
                     context.Done(reply);
                 }
@@ -175,11 +200,21 @@ namespace SaltashBot.Dialogs
                 dialog. */
             reply.Attachments = new List<Attachment>();
             reply.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+            List<string> images = new List<string>();
 
             do
             {
                 counter++;
-                string url = GetRandomImage();
+                string url = string.Empty;
+
+                do
+                {
+                    url = GetRandomImage();
+                }
+                while (images.Contains(url));
+
+                images.Add(url);
+
                 string imageName = url.Substring(url.LastIndexOf("/") + 1, (url.LastIndexOf(".") - url.LastIndexOf("/")) - 1);
                 HeroCard card = new HeroCard
                 {
