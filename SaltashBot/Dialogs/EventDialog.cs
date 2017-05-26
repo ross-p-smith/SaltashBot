@@ -67,7 +67,6 @@ namespace SaltashBot.Dialogs
 
         public async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync("Hi, I'm the Saltash event bot. I understand the commands \"events\", \"about\" and \"photos\".");
             context.Wait(MessageReceivedAsync);
         }
 

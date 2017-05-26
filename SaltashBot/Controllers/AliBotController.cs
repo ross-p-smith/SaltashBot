@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using SaltashBot.Attributes;
 using System;
 
 namespace SaltashBot
 {
-    [BotAuthentication]
-    public class MessagesController : ApiController
+    [AliBotAuthentication]
+    public class AliBotController : ApiController
     {
         /// <summary>
         /// POST: api/Messages
@@ -19,7 +20,7 @@ namespace SaltashBot
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                await Conversation.SendAsync(activity, () => new Dialogs.AliBotRootDialog());
             }
             else
             {
@@ -29,7 +30,6 @@ namespace SaltashBot
                     ConnectorClient connector = new ConnectorClient(new Uri(newActivity.ServiceUrl));
                     await connector.Conversations.ReplyToActivityAsync(newActivity);
                 }
-
             }
 
             var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -48,9 +48,9 @@ namespace SaltashBot
                 // Handle conversation state changes, like members being added and removed
                 // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
                 // Not available in all channels
-                if(string.IsNullOrWhiteSpace(message.Text))
+                if (string.IsNullOrWhiteSpace(message.Text))
                 {
-                    var reply = message.CreateReply("Hi, I'm the Saltash bot. Let's get started.  I currently understand the commands \"Events\", \"About\" and \"Photos\"");
+                    var reply = message.CreateReply("Hi, buddy.  I'm AliBot.  Tell me to translate a word by typing translate, then the word you want to translate.  You can also ask me to deploy.");
                     return reply;
                 }
             }

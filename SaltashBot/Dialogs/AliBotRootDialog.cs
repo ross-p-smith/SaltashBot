@@ -7,7 +7,7 @@ using System.Threading;
 namespace SaltashBot.Dialogs
 {
     [Serializable]
-    public class RootDialog : IDialog<object>
+    public class AliBotRootDialog : IDialog<object>
     {
         public async Task StartAsync(IDialogContext context)
         {
@@ -27,7 +27,7 @@ namespace SaltashBot.Dialogs
 
         private void SendWelcomeMessageAsync(IDialogContext context)
         {
-            context.Call(new EventDialog(), this.ResumeAfterEventDialog);
+            context.Call(new AliBotEventDialog(), this.ResumeAfterEventDialog);
         }
 
         public async Task ResumeAfterEventDialog(IDialogContext context, IAwaitable<object> result)
